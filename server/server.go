@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 
+	iso "github.com/rmg/iso4217"
 	pb "github.com/wipdev-tech/microbank/transactions"
 	"google.golang.org/grpc"
 )
@@ -15,6 +16,11 @@ type transactionsServer struct {
 }
 
 func (s *transactionsServer) Deposit(ctx context.Context, in *pb.DepositRequest) (*pb.DepositResponse, error) {
+	balanceCode := in.CurrentBalance.CurrencyCode
+	code, _ := iso.ByName(balanceCode)
+	if code == 0 {
+		fmt.Println("Invalid code")
+	}
 	fmt.Println(in.CurrentBalance)
 	res := &pb.DepositResponse{}
 	return res, nil

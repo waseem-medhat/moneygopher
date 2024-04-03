@@ -3,6 +3,7 @@ module github.com/wipdev-tech/microbank
 go 1.22.1
 
 require (
+	github.com/rmg/iso4217 v1.0.1
 	google.golang.org/genproto v0.0.0-20240123012728-ef4313101c80
 	google.golang.org/grpc v1.62.1
 	google.golang.org/protobuf v1.33.0
