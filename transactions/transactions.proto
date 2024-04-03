@@ -1,0 +1,18 @@
+syntax="proto3";
+
+option go_package = "github.com/wipdev-tech/microbank/internal/transactions";
+
+import "proto/money.proto";
+
+service Transactions {
+    rpc Deposit(DepositRequest) returns (DepositResponse) {}
+}
+
+message DepositRequest {
+    google.type.Money currentBalance = 1;
+    google.type.Money amount = 2;
+}
+
+message DepositResponse {
+    google.type.Money newBalance = 1;
+}
