@@ -5,7 +5,10 @@ protogen:
 		transactions/transactions.proto
 
 serve:
-	go run ./server
+	go run ./${s}/cmd/
+
+api:
+	go run ./gateway/
 
 ui:
-	grpcui -plaintext -proto proto/money.proto -proto transactions/transactions.proto localhost:8080
+	grpcui -plaintext -proto proto/money.proto -proto transactions/transactions.proto localhost:${port}
