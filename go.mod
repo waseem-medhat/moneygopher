@@ -1,4 +1,4 @@
-module github.com/wipdev-tech/microbank
+module github.com/wipdev-tech/moneygopher
 
 go 1.22.1
 

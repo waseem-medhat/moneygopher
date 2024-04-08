@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/wipdev-tech/microbank/transactions"
+	"github.com/wipdev-tech/moneygopher/transactions"
 	"google.golang.org/genproto/googleapis/type/money"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
