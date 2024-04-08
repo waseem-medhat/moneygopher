@@ -6,6 +6,8 @@ import "proto/money.proto";
 
 service Transactions {
     rpc Deposit(DepositRequest) returns (DepositResponse) {}
+    rpc Pay(PayRequest) returns (PayResponse) {}
+    rpc Transfer(TransferRequest) returns (TransferResponse) {}
 }
 
 message DepositRequest {
@@ -16,4 +18,33 @@ message DepositRequest {
 
 message DepositResponse {
     google.type.Money newBalance = 1;
+}
+
+message PayRequest {
+    string cardID = 1;
+    string merchant = 2;
+    google.type.Money amount = 3;
+    int32 otp = 4;
+}
+
+message PayResponse {
+    google.type.Money newBalance = 1;
+}
+
+message TransferRequest {
+  enum Type {
+    OUTGOING = 0;
+    INCOMING = 1;
+  }
+
+  Type type = 1;
+  string fromAccountID = 2;
+  string toAccountID = 3;
+  google.type.Money amount = 4;
+  int32 otp = 5;
+}
+
+message TransferResponse {
+    bool ok = 1;
+    string message = 2;
 }

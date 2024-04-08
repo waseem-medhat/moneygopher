@@ -23,6 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TransactionsClient interface {
 	Deposit(ctx context.Context, in *DepositRequest, opts ...grpc.CallOption) (*DepositResponse, error)
+	Pay(ctx context.Context, in *PayRequest, opts ...grpc.CallOption) (*PayResponse, error)
+	Transfer(ctx context.Context, in *TransferRequest, opts ...grpc.CallOption) (*TransferResponse, error)
 }
 
 type transactionsClient struct {
@@ -42,11 +44,31 @@ func (c *transactionsClient) Deposit(ctx context.Context, in *DepositRequest, op
 	return out, nil
 }
 
+func (c *transactionsClient) Pay(ctx context.Context, in *PayRequest, opts ...grpc.CallOption) (*PayResponse, error) {
+	out := new(PayResponse)
+	err := c.cc.Invoke(ctx, "/Transactions/Pay", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *transactionsClient) Transfer(ctx context.Context, in *TransferRequest, opts ...grpc.CallOption) (*TransferResponse, error) {
+	out := new(TransferResponse)
+	err := c.cc.Invoke(ctx, "/Transactions/Transfer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TransactionsServer is the server API for Transactions service.
 // All implementations must embed UnimplementedTransactionsServer
 // for forward compatibility
 type TransactionsServer interface {
 	Deposit(context.Context, *DepositRequest) (*DepositResponse, error)
+	Pay(context.Context, *PayRequest) (*PayResponse, error)
+	Transfer(context.Context, *TransferRequest) (*TransferResponse, error)
 	mustEmbedUnimplementedTransactionsServer()
 }
 
@@ -56,6 +78,12 @@ type UnimplementedTransactionsServer struct {
 
 func (UnimplementedTransactionsServer) Deposit(context.Context, *DepositRequest) (*DepositResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Deposit not implemented")
+}
+func (UnimplementedTransactionsServer) Pay(context.Context, *PayRequest) (*PayResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Pay not implemented")
+}
+func (UnimplementedTransactionsServer) Transfer(context.Context, *TransferRequest) (*TransferResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Transfer not implemented")
 }
 func (UnimplementedTransactionsServer) mustEmbedUnimplementedTransactionsServer() {}
 
@@ -88,6 +116,42 @@ func _Transactions_Deposit_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Transactions_Pay_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PayRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TransactionsServer).Pay(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Transactions/Pay",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TransactionsServer).Pay(ctx, req.(*PayRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Transactions_Transfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TransferRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TransactionsServer).Transfer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Transactions/Transfer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TransactionsServer).Transfer(ctx, req.(*TransferRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Transactions_ServiceDesc is the grpc.ServiceDesc for Transactions service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +162,14 @@ var Transactions_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Deposit",
 			Handler:    _Transactions_Deposit_Handler,
+		},
+		{
+			MethodName: "Pay",
+			Handler:    _Transactions_Pay_Handler,
+		},
+		{
+			MethodName: "Transfer",
+			Handler:    _Transactions_Transfer_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
