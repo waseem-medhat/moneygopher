@@ -9,8 +9,9 @@ service Transactions {
 }
 
 message DepositRequest {
-    google.type.Money currentBalance = 1;
+    string accountID = 1;
     google.type.Money amount = 2;
+    int32 otp = 3;
 }
 
 message DepositResponse {

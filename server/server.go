@@ -16,12 +16,17 @@ type transactionsServer struct {
 }
 
 func (s *transactionsServer) Deposit(ctx context.Context, in *pb.DepositRequest) (*pb.DepositResponse, error) {
-	balanceCode := in.CurrentBalance.CurrencyCode
-	code, _ := iso.ByName(balanceCode)
+	code, _ := iso.ByName(in.Amount.CurrencyCode)
 	if code == 0 {
 		fmt.Println("Invalid code")
+	} else {
+		fmt.Printf(
+			"Depositing %v %v in account %v",
+			in.Amount.Units,
+			in.Amount.CurrencyCode,
+			in.AccountID,
+		)
 	}
-	fmt.Println(in.CurrentBalance)
 	res := &pb.DepositResponse{}
 	return res, nil
 }
@@ -35,5 +40,6 @@ func main() {
 
 	grpcServer := grpc.NewServer(opts...)
 	pb.RegisterTransactionsServer(grpcServer, &transactionsServer{})
+	fmt.Println("Listening at port 8080")
 	grpcServer.Serve(lis)
 }

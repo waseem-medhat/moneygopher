@@ -4,5 +4,8 @@ protogen:
 		proto/money.proto \
 		transactions/transactions.proto
 
+serve:
+	go run ./server
+
 ui:
 	grpcui -plaintext -proto proto/money.proto -proto transactions/transactions.proto localhost:8080
