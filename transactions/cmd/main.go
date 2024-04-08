@@ -32,7 +32,7 @@ func (s *transactionsServer) Deposit(ctx context.Context, in *pb.DepositRequest)
 }
 
 func main() {
-	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", 8080))
+	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", 8081))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -40,6 +40,6 @@ func main() {
 
 	grpcServer := grpc.NewServer(opts...)
 	pb.RegisterTransactionsServer(grpcServer, &transactionsServer{})
-	fmt.Println("Listening at port 8080")
+	fmt.Println("Listening at port 8081")
 	grpcServer.Serve(lis)
 }
