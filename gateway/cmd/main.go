@@ -18,6 +18,7 @@ func main() {
 		Addr:    ":8080",
 		Handler: mux,
 	}
+	fmt.Println("Listening on port 8080")
 	server.ListenAndServe()
 }
 
@@ -25,7 +26,7 @@ func grpcHandler(w http.ResponseWriter, r *http.Request) {
 	opts := []grpc.DialOption{}
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
-	conn, err := grpc.Dial("localhost:8081", opts...)
+	conn, err := grpc.Dial("0.0.0.0:8081", opts...)
 	if err != nil {
 		fmt.Println("failed to dial grpc:", err)
 	}
