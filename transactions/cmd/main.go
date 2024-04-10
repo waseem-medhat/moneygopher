@@ -21,7 +21,7 @@ func (s *transactionsServer) Deposit(ctx context.Context, in *pb.DepositRequest)
 		fmt.Println("Invalid code")
 	} else {
 		fmt.Printf(
-			"Depositing %v %v in account %v",
+			"Depositing %v %v in account %v\n",
 			in.Amount.Units,
 			in.Amount.CurrencyCode,
 			in.AccountID,
@@ -32,7 +32,7 @@ func (s *transactionsServer) Deposit(ctx context.Context, in *pb.DepositRequest)
 }
 
 func main() {
-	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", 8081))
+	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", 8081))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}

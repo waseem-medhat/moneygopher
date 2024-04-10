@@ -5,7 +5,13 @@ protogen:
 		transactions/transactions.proto
 
 serve:
-	go run ./${s}/cmd/
+	go run ./${service}/cmd/
+
+go_build:
+	cd ${service} && CGO_ENABLED=0 go build -o bin/${service} ./cmd/
+
+docker_build:
+	cd ${service} && docker build -t wipdev/moneygopher-${service}:latest .
 
 api:
 	go run ./gateway/
