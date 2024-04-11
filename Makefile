@@ -13,6 +13,12 @@ go_build:
 docker_build:
 	cd ${service} && docker build -t wipdev/moneygopher-${service}:latest .
 
+build_all:
+	make go_build service=transactions && \
+	make docker_build service=transactions && \
+	make go_build service=gateway && \
+	make docker_build service=gateway
+
 api:
 	go run ./gateway/
 
