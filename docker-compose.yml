@@ -1,0 +1,25 @@
+services:
+  gateway:
+    image:
+      wipdev/moneygopher-gateway
+    build:
+      ./gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - transactions
+    networks:
+      - moneygopher
+
+  transactions:
+    image:
+      wipdev/moneygopher-transactions
+    build:
+      ./transactions
+    ports:
+      - "8081:8081"
+    networks:
+      - moneygopher
+
+networks:
+  moneygopher:
