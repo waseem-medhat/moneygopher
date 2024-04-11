@@ -18,7 +18,7 @@ func main() {
 		Addr:    ":8080",
 		Handler: mux,
 	}
-	fmt.Println("Gateway is up istening on port 8080")
+	fmt.Println("Gateway is up on port 8080")
 	server.ListenAndServe()
 }
 

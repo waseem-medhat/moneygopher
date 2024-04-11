@@ -40,6 +40,6 @@ func main() {
 
 	grpcServer := grpc.NewServer(opts...)
 	pb.RegisterTransactionsServer(grpcServer, &transactionsServer{})
-	fmt.Println("Listening at port 8081")
+	fmt.Println("Transactions service is up on port 8081")
 	grpcServer.Serve(lis)
 }
