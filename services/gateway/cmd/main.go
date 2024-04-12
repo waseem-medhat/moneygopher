@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/wipdev-tech/moneygopher/transactions"
+	"github.com/wipdev-tech/moneygopher/services/transactions"
 	"google.golang.org/genproto/googleapis/type/money"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

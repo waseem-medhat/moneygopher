@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v5.26.1
-// source: accounts/accounts.proto
+// source: services/accounts/accounts.proto
 
 package accounts
 
@@ -101,5 +101,5 @@ var Accounts_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "accounts/accounts.proto",
+	Metadata: "services/accounts/accounts.proto",
 }

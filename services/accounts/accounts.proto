@@ -1,6 +1,6 @@
 syntax="proto3";
 
-option go_package = "github.com/wipdev-tech/moneygopher/accounts";
+option go_package = "github.com/wipdev-tech/moneygopher/services/accounts";
 
 import "proto/money.proto";
 

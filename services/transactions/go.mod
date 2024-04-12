@@ -1,8 +1,9 @@
-module github.com/wipdev-tech/moneygopher/accounts
+module github.com/wipdev-tech/moneygopher/services/transactions
 
-go 1.22.2
+go 1.22.1
 
 require (
+	github.com/rmg/iso4217 v1.0.1
 	google.golang.org/genproto v0.0.0-20240401170217-c3f982113cda
 	google.golang.org/grpc v1.63.2
 	google.golang.org/protobuf v1.33.0

@@ -3,7 +3,7 @@ services:
     image:
       wipdev/moneygopher-gateway
     build:
-      ./gateway
+      ./services/gateway
     ports:
       - "8080:8080"
     networks:
@@ -13,7 +13,7 @@ services:
     image:
       wipdev/moneygopher-transactions
     build:
-      ./transactions
+      ./services/transactions
     ports:
       - "8081:8081"
     networks:
@@ -23,7 +23,7 @@ services:
     image:
       wipdev/moneygopher-accounts
     build:
-      ./accounts
+      ./services/accounts
     ports:
       - "8082:8082"
     networks:

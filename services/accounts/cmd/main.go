@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 
-	pb "github.com/wipdev-tech/moneygopher/accounts"
+	pb "github.com/wipdev-tech/moneygopher/services/accounts"
 	"google.golang.org/grpc"
 )
 

@@ -1,4 +1,4 @@
-module github.com/wipdev-tech/moneygopher/gateway
+module github.com/wipdev-tech/moneygopher/services/gateway
 
 go 1.22.2
 

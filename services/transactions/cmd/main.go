@@ -7,7 +7,7 @@ import (
 	"net"
 
 	iso "github.com/rmg/iso4217"
-	pb "github.com/wipdev-tech/moneygopher/transactions"
+	pb "github.com/wipdev-tech/moneygopher/services/transactions"
 	"google.golang.org/grpc"
 )
 
