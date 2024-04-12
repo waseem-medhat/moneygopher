@@ -19,5 +19,15 @@ services:
     networks:
       - moneygopher
 
+  accounts:
+    image:
+      wipdev/moneygopher-accounts
+    build:
+      ./accounts
+    ports:
+      - "8082:8082"
+    networks:
+      - moneygopher
+
 networks:
   moneygopher:

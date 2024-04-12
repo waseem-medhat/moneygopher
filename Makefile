@@ -2,7 +2,8 @@ protogen:
 	protoc --go_out=. --go_opt=paths=source_relative \
 		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
 		proto/money.proto \
-		transactions/transactions.proto
+		transactions/transactions.proto \
+		accounts/accounts.proto
 
 serve:
 	go run ./${service}/cmd/
@@ -15,10 +16,12 @@ docker_build:
 
 go_build_all:
 	make go_build service=transactions && \
+	make go_build service=accounts && \
 	make go_build service=gateway
 
 docker_build_all:
 	make docker_build service=transactions && \
+	make docker_build service=accounts && \
 	make docker_build service=gateway
 
 api:
