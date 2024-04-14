@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/google/uuid"
+	"github.com/wipdev-tech/moneygopher/services/accounts"
 	"github.com/wipdev-tech/moneygopher/services/transactions"
 	"google.golang.org/genproto/googleapis/type/money"
 	"google.golang.org/grpc"
@@ -52,5 +54,23 @@ func grpcHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleCreateAccount(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("handler works")
+	opts := []grpc.DialOption{}
+	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	conn, err := grpc.Dial("accounts:8082", opts...)
+	if err != nil {
+		fmt.Println("failed to dial grpc:", err)
+	}
+	defer conn.Close()
+
+	accClient := accounts.NewAccountsClient(conn)
+
+	ctx := context.Background()
+	newID := uuid.NewString()
+	resp, err := accClient.CreateAccount(ctx, &accounts.CreateAccountRequest{Id: newID})
+	if err != nil {
+		fmt.Println("failed to run RPC:", err)
+	} else {
+		fmt.Println("created account", resp.Id)
+	}
 }
