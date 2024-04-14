@@ -3,7 +3,6 @@ module github.com/wipdev-tech/moneygopher/services/accounts
 go 1.22.2
 
 require (
-	github.com/joho/godotenv v1.5.1
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240411070317-a1138d155304
 	google.golang.org/genproto v0.0.0-20240401170217-c3f982113cda
 	google.golang.org/grpc v1.63.2

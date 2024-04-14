@@ -8,7 +8,6 @@ import (
 	"net"
 	"os"
 
-	"github.com/joho/godotenv"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 	pb "github.com/wipdev-tech/moneygopher/services/accounts"
 	"github.com/wipdev-tech/moneygopher/services/accounts/internal/database"
@@ -37,7 +36,6 @@ func (s *accountsServer) CreateAccount(ctx context.Context, in *pb.CreateAccount
 }
 
 func main() {
-	godotenv.Load()
 	dbURL := os.Getenv("ACCOUNTS_DB_URL")
 	dbConn, err := sql.Open("libsql", dbURL)
 	if err != nil {
@@ -46,7 +44,7 @@ func main() {
 	defer dbConn.Close()
 	db := database.New(dbConn)
 
-	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", 8082))
+	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%v", os.Getenv("ACCOUNTS_PORT")))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -54,6 +52,6 @@ func main() {
 
 	grpcServer := grpc.NewServer(opts...)
 	pb.RegisterAccountsServer(grpcServer, &accountsServer{db: db})
-	fmt.Println("Accounts service is up on port 8082")
+	fmt.Println("Accounts service is up on port", os.Getenv("ACCOUNTS_PORT"))
 	grpcServer.Serve(lis)
 }

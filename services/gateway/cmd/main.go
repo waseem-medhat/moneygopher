@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/google/uuid"
 	"github.com/wipdev-tech/moneygopher/services/accounts"
@@ -18,10 +19,10 @@ func main() {
 	mux.HandleFunc("/", grpcHandler)
 	mux.HandleFunc("/accounts/create", handleCreateAccount)
 	server := http.Server{
-		Addr:    ":8080",
+		Addr:    ":" + os.Getenv("GATEWAY_PORT"),
 		Handler: mux,
 	}
-	fmt.Println("Gateway is up on port 8080")
+	fmt.Println("Gateway is up on port", os.Getenv("GATEWAY_PORT"))
 	server.ListenAndServe()
 }
 
@@ -29,7 +30,7 @@ func grpcHandler(w http.ResponseWriter, r *http.Request) {
 	opts := []grpc.DialOption{}
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
-	conn, err := grpc.Dial("transactions:8081", opts...)
+	conn, err := grpc.Dial("transactions:"+os.Getenv("TRANSACTIONS_PORT"), opts...)
 	if err != nil {
 		fmt.Println("failed to dial grpc:", err)
 	}
@@ -57,7 +58,7 @@ func handleCreateAccount(w http.ResponseWriter, r *http.Request) {
 	opts := []grpc.DialOption{}
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
-	conn, err := grpc.Dial("accounts:8082", opts...)
+	conn, err := grpc.Dial("accounts:"+os.Getenv("ACCOUNTS_PORT"), opts...)
 	if err != nil {
 		fmt.Println("failed to dial grpc:", err)
 	}
