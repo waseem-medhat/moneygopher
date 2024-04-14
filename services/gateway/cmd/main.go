@@ -14,6 +14,7 @@ import (
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", grpcHandler)
+	mux.HandleFunc("/accounts/create", handleCreateAccount)
 	server := http.Server{
 		Addr:    ":8080",
 		Handler: mux,
@@ -48,4 +49,8 @@ func grpcHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		fmt.Println(resp.NewBalance)
 	}
+}
+
+func handleCreateAccount(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("handler works")
 }
