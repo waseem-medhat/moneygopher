@@ -1,6 +1,7 @@
 go 1.22.2
 
 use (
-	./gateway
-	./transactions
+	./services/accounts
+	./services/gateway
+	./services/transactions
 )

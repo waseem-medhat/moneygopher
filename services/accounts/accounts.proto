@@ -1,0 +1,23 @@
+syntax="proto3";
+
+option go_package = "github.com/wipdev-tech/moneygopher/services/accounts";
+
+import "proto/money.proto";
+
+service Accounts {
+    rpc GetAccount(GetAccountRequest) returns (Account) {}
+    rpc CreateAccount(CreateAccountRequest) returns (Account) {}
+}
+
+message GetAccountRequest {
+    string id = 1;
+}
+
+message CreateAccountRequest {
+    string id = 1;
+}
+
+message Account {
+    string id = 1;
+    google.type.Money balance = 2;
+}

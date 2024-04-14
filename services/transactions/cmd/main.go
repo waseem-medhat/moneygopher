@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 
 	iso "github.com/rmg/iso4217"
-	pb "github.com/wipdev-tech/moneygopher/transactions"
+	pb "github.com/wipdev-tech/moneygopher/services/transactions"
 	"google.golang.org/grpc"
 )
 
@@ -32,7 +33,7 @@ func (s *transactionsServer) Deposit(ctx context.Context, in *pb.DepositRequest)
 }
 
 func main() {
-	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", 8081))
+	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%s", os.Getenv("TRANSACTIONS_PORT")))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -40,6 +41,6 @@ func main() {
 
 	grpcServer := grpc.NewServer(opts...)
 	pb.RegisterTransactionsServer(grpcServer, &transactionsServer{})
-	fmt.Println("Transactions service is up on port 8081")
+	fmt.Println("Transactions service is up on port", os.Getenv("TRANSACTIONS_PORT"))
 	grpcServer.Serve(lis)
 }
