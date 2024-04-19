@@ -30,6 +30,18 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+
+	err = makeGoMod(serviceName)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	err = makeMain(serviceName)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
 
 func makeDirs(serviceName string) error {
@@ -58,6 +70,37 @@ func makeDockerfile(serviceName string) error {
 	if err != nil {
 		return err
 	}
+	defer file.Close()
+
+	return t.Execute(file, serviceName)
+}
+
+func makeGoMod(serviceName string) error {
+	t, err := template.ParseFiles("codegen/go.mod.template")
+	if err != nil {
+		return err
+	}
+
+	file, err := os.Create(fmt.Sprintf("services/%s/go.mod", serviceName))
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	return t.Execute(file, serviceName)
+}
+
+func makeMain(serviceName string) error {
+	t, err := template.ParseFiles("codegen/main.go.template")
+	if err != nil {
+		return err
+	}
+
+	file, err := os.Create(fmt.Sprintf("services/%s/cmd/main.go", serviceName))
+	if err != nil {
+		return err
+	}
+	defer file.Close()
 
 	return t.Execute(file, serviceName)
 }
