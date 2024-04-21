@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"net"
 	"os"
+	"time"
 
 	pb "github.com/wipdev-tech/moneygopher/services/otp"
 	"google.golang.org/grpc"
@@ -14,10 +15,13 @@ import (
 
 type otpServer struct {
 	pb.UnimplementedOtpServer
+	cache *otpCache
 }
 
 func (s *otpServer) GenerateOTP(context.Context, *pb.GenerateOtpRequest) (*pb.OtpResponse, error) {
-	return &pb.OtpResponse{Password: makeOTP()}, nil
+	newOTP := makeOTP()
+	s.cache.add(newOTP)
+	return &pb.OtpResponse{Password: newOTP}, nil
 }
 
 func makeOTP() string {
@@ -30,13 +34,15 @@ func makeOTP() string {
 }
 
 func main() {
-	// dbURL := os.Getenv("OTP_DB_URL")
-	// dbConn, err := sql.Open("libsql", dbURL)
-	// if err != nil {
-	// 	log.Fatal("couldn't open DB connection:", err)
-	// }
-	// defer dbConn.Close()
-	// db := database.New(dbConn)
+	cache := newCache()
+
+	go func() {
+		t := time.NewTicker(time.Second)
+		for range t.C {
+			fmt.Println(cache.otps)
+			cache.reap()
+		}
+	}()
 
 	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%v", os.Getenv("OTP_PORT")))
 	if err != nil {
@@ -45,7 +51,7 @@ func main() {
 	var opts []grpc.ServerOption
 
 	grpcServer := grpc.NewServer(opts...)
-	pb.RegisterOtpServer(grpcServer, &otpServer{})
+	pb.RegisterOtpServer(grpcServer, &otpServer{cache: cache})
 	fmt.Println("OTP service is up on port", os.Getenv("OTP_PORT"))
 	grpcServer.Serve(lis)
 }
