@@ -15,6 +15,10 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+var insecureOpts = []grpc.DialOption{
+	grpc.WithTransportCredentials(insecure.NewCredentials()),
+}
+
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", grpcHandler)
@@ -29,10 +33,7 @@ func main() {
 }
 
 func grpcHandler(w http.ResponseWriter, r *http.Request) {
-	opts := []grpc.DialOption{}
-	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
-
-	conn, err := grpc.Dial("transactions:"+os.Getenv("TRANSACTIONS_PORT"), opts...)
+	conn, err := grpc.Dial("transactions:"+os.Getenv("TRANSACTIONS_PORT"), insecureOpts...)
 	if err != nil {
 		fmt.Println("failed to dial grpc:", err)
 	}
@@ -57,10 +58,7 @@ func grpcHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleCreateAccount(w http.ResponseWriter, r *http.Request) {
-	opts := []grpc.DialOption{}
-	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
-
-	conn, err := grpc.Dial("accounts:"+os.Getenv("ACCOUNTS_PORT"), opts...)
+	conn, err := grpc.Dial("accounts:"+os.Getenv("ACCOUNTS_PORT"), insecureOpts...)
 	if err != nil {
 		fmt.Println("failed to dial grpc:", err)
 	}
@@ -79,10 +77,7 @@ func handleCreateAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleGenerateOTP(w http.ResponseWriter, r *http.Request) {
-	opts := []grpc.DialOption{}
-	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
-
-	conn, err := grpc.Dial("otp:"+os.Getenv("OTP_PORT"), opts...)
+	conn, err := grpc.Dial("otp:"+os.Getenv("OTP_PORT"), insecureOpts...)
 	if err != nil {
 		fmt.Println("failed to dial grpc:", err)
 	}
