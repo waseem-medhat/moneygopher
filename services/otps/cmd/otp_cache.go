@@ -21,6 +21,14 @@ func (c *otpCache) reap() {
 	}
 }
 
+func (c *otpCache) get(otp string) bool {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	_, ok := c.otps[otp]
+	return ok
+}
+
 func (c *otpCache) add(otp string) {
 	c.mu.Lock()
 	defer c.mu.Unlock()

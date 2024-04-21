@@ -111,17 +111,32 @@ func handleOTPsPost(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	otpClient := otps.NewOtpClient(conn)
+	otpClient := otps.NewOtpsClient(conn)
 
 	ctx := context.Background()
 	testID := uuid.NewString()
-	resp, err := otpClient.GenerateOTP(ctx, &otps.GenerateOtpRequest{AccountId: testID})
+	resp, err := otpClient.GenerateOtp(ctx, &otps.GenerateOtpRequest{AccountId: testID})
 	if err != nil {
 		fmt.Println("failed to run RPC:", err)
 	} else {
-		fmt.Println("new OTP:", resp.Password)
+		fmt.Println("new OTP:", resp.Otp)
 	}
 }
 
 func handleOTPsGet(w http.ResponseWriter, r *http.Request) {
+	otp := r.URL.Query().Get("otp")
+
+	conn, err := grpc.Dial("otp:"+os.Getenv("OTP_PORT"), insecureOpts...)
+	if err != nil {
+		fmt.Println("failed to dial grpc:", err)
+	}
+	defer conn.Close()
+
+	otpClient := otps.NewOtpsClient(conn)
+	resp, err := otpClient.CheckOtp(r.Context(), &otps.CheckOtpRequest{Otp: otp})
+	if err != nil {
+		fmt.Println("failed to run RPC:", err)
+	} else {
+		fmt.Println("new OTP:", resp.IsValid)
+	}
 }

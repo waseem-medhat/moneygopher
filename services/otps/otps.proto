@@ -2,14 +2,23 @@ syntax="proto3";
 
 option go_package = "github.com/wipdev-tech/moneygopher/services/otps";
 
-service Otp {
-    rpc GenerateOTP(GenerateOtpRequest) returns (OtpResponse) {}
+service Otps {
+    rpc GenerateOtp(GenerateOtpRequest) returns (GenerateOtpResponse) {}
+    rpc CheckOtp(CheckOtpRequest) returns (CheckOtpResponse) {}
 }
 
 message GenerateOtpRequest {
     string accountId = 1;
 }
 
-message OtpResponse {
-    string password = 1;
-s}
+message GenerateOtpResponse {
+    string otp = 1;
+}
+
+message CheckOtpRequest {
+    string otp = 1;
+}
+
+message CheckOtpResponse {
+    bool isValid = 1;
+}

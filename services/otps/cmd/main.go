@@ -13,15 +13,19 @@ import (
 	"google.golang.org/grpc"
 )
 
-type otpServer struct {
-	pb.UnimplementedOtpServer
+type otpsServer struct {
+	pb.UnimplementedOtpsServer
 	cache *otpCache
 }
 
-func (s *otpServer) GenerateOTP(context.Context, *pb.GenerateOtpRequest) (*pb.OtpResponse, error) {
+func (s *otpsServer) GenerateOtp(context.Context, *pb.GenerateOtpRequest) (*pb.GenerateOtpResponse, error) {
 	newOTP := makeOTP()
 	s.cache.add(newOTP)
-	return &pb.OtpResponse{Password: newOTP}, nil
+	return &pb.GenerateOtpResponse{Otp: newOTP}, nil
+}
+
+func (s *otpsServer) CheckOtp(ctx context.Context, in *pb.CheckOtpRequest) (*pb.CheckOtpResponse, error) {
+	return &pb.CheckOtpResponse{IsValid: s.cache.get(in.Otp)}, nil
 }
 
 func makeOTP() string {
@@ -50,7 +54,7 @@ func main() {
 	var opts []grpc.ServerOption
 
 	grpcServer := grpc.NewServer(opts...)
-	pb.RegisterOtpServer(grpcServer, &otpServer{cache: cache})
+	pb.RegisterOtpsServer(grpcServer, &otpsServer{cache: cache})
 	fmt.Println("OTP service is up on port", os.Getenv("OTP_PORT"))
 	grpcServer.Serve(lis)
 }

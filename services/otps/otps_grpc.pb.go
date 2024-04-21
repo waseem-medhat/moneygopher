@@ -18,86 +18,122 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// OtpClient is the client API for Otp service.
+// OtpsClient is the client API for Otps service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type OtpClient interface {
-	GenerateOTP(ctx context.Context, in *GenerateOtpRequest, opts ...grpc.CallOption) (*OtpResponse, error)
+type OtpsClient interface {
+	GenerateOtp(ctx context.Context, in *GenerateOtpRequest, opts ...grpc.CallOption) (*GenerateOtpResponse, error)
+	CheckOtp(ctx context.Context, in *CheckOtpRequest, opts ...grpc.CallOption) (*CheckOtpResponse, error)
 }
 
-type otpClient struct {
+type otpsClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewOtpClient(cc grpc.ClientConnInterface) OtpClient {
-	return &otpClient{cc}
+func NewOtpsClient(cc grpc.ClientConnInterface) OtpsClient {
+	return &otpsClient{cc}
 }
 
-func (c *otpClient) GenerateOTP(ctx context.Context, in *GenerateOtpRequest, opts ...grpc.CallOption) (*OtpResponse, error) {
-	out := new(OtpResponse)
-	err := c.cc.Invoke(ctx, "/Otp/GenerateOTP", in, out, opts...)
+func (c *otpsClient) GenerateOtp(ctx context.Context, in *GenerateOtpRequest, opts ...grpc.CallOption) (*GenerateOtpResponse, error) {
+	out := new(GenerateOtpResponse)
+	err := c.cc.Invoke(ctx, "/Otps/GenerateOtp", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// OtpServer is the server API for Otp service.
-// All implementations must embed UnimplementedOtpServer
+func (c *otpsClient) CheckOtp(ctx context.Context, in *CheckOtpRequest, opts ...grpc.CallOption) (*CheckOtpResponse, error) {
+	out := new(CheckOtpResponse)
+	err := c.cc.Invoke(ctx, "/Otps/CheckOtp", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// OtpsServer is the server API for Otps service.
+// All implementations must embed UnimplementedOtpsServer
 // for forward compatibility
-type OtpServer interface {
-	GenerateOTP(context.Context, *GenerateOtpRequest) (*OtpResponse, error)
-	mustEmbedUnimplementedOtpServer()
+type OtpsServer interface {
+	GenerateOtp(context.Context, *GenerateOtpRequest) (*GenerateOtpResponse, error)
+	CheckOtp(context.Context, *CheckOtpRequest) (*CheckOtpResponse, error)
+	mustEmbedUnimplementedOtpsServer()
 }
 
-// UnimplementedOtpServer must be embedded to have forward compatible implementations.
-type UnimplementedOtpServer struct {
+// UnimplementedOtpsServer must be embedded to have forward compatible implementations.
+type UnimplementedOtpsServer struct {
 }
 
-func (UnimplementedOtpServer) GenerateOTP(context.Context, *GenerateOtpRequest) (*OtpResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GenerateOTP not implemented")
+func (UnimplementedOtpsServer) GenerateOtp(context.Context, *GenerateOtpRequest) (*GenerateOtpResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GenerateOtp not implemented")
 }
-func (UnimplementedOtpServer) mustEmbedUnimplementedOtpServer() {}
+func (UnimplementedOtpsServer) CheckOtp(context.Context, *CheckOtpRequest) (*CheckOtpResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckOtp not implemented")
+}
+func (UnimplementedOtpsServer) mustEmbedUnimplementedOtpsServer() {}
 
-// UnsafeOtpServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to OtpServer will
+// UnsafeOtpsServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to OtpsServer will
 // result in compilation errors.
-type UnsafeOtpServer interface {
-	mustEmbedUnimplementedOtpServer()
+type UnsafeOtpsServer interface {
+	mustEmbedUnimplementedOtpsServer()
 }
 
-func RegisterOtpServer(s grpc.ServiceRegistrar, srv OtpServer) {
-	s.RegisterService(&Otp_ServiceDesc, srv)
+func RegisterOtpsServer(s grpc.ServiceRegistrar, srv OtpsServer) {
+	s.RegisterService(&Otps_ServiceDesc, srv)
 }
 
-func _Otp_GenerateOTP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Otps_GenerateOtp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GenerateOtpRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OtpServer).GenerateOTP(ctx, in)
+		return srv.(OtpsServer).GenerateOtp(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/Otp/GenerateOTP",
+		FullMethod: "/Otps/GenerateOtp",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OtpServer).GenerateOTP(ctx, req.(*GenerateOtpRequest))
+		return srv.(OtpsServer).GenerateOtp(ctx, req.(*GenerateOtpRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Otp_ServiceDesc is the grpc.ServiceDesc for Otp service.
+func _Otps_CheckOtp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckOtpRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OtpsServer).CheckOtp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Otps/CheckOtp",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OtpsServer).CheckOtp(ctx, req.(*CheckOtpRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Otps_ServiceDesc is the grpc.ServiceDesc for Otps service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Otp_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "Otp",
-	HandlerType: (*OtpServer)(nil),
+var Otps_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "Otps",
+	HandlerType: (*OtpsServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GenerateOTP",
-			Handler:    _Otp_GenerateOTP_Handler,
+			MethodName: "GenerateOtp",
+			Handler:    _Otps_GenerateOtp_Handler,
+		},
+		{
+			MethodName: "CheckOtp",
+			Handler:    _Otps_CheckOtp_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
