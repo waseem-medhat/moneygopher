@@ -35,5 +35,17 @@ services:
     env_file:
         - ./.env
 
+  otp:
+    image:
+      wipdev/moneygopher-otp
+    build:
+      ./services/otp
+    ports:
+      - "8083:8083"
+    networks:
+      - moneygopher
+    env_file:
+        - ./.env
+
 networks:
   moneygopher:
