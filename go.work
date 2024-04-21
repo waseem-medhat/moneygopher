@@ -4,5 +4,6 @@ use (
 	./codegen
 	./services/accounts
 	./services/gateway
+	./services/otp
 	./services/transactions
 )
