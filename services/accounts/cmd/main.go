@@ -20,9 +20,23 @@ type accountsServer struct {
 	db *database.Queries
 }
 
-func (s *accountsServer) GetAccount(context.Context, *pb.GetAccountRequest) (*pb.Account, error) {
-	return nil, nil
+func (s *accountsServer) GetAccount(ctx context.Context, in *pb.GetAccountRequest) (*pb.Account, error) {
+	dbAcc, err := s.db.GetAccountByID(ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	acc := &pb.Account{
+		Id: dbAcc.ID,
+		Balance: &money.Money{
+			CurrencyCode: "USD",
+			Units:        dbAcc.BalanceDollars,
+		},
+	}
+
+	return acc, err
 }
+
 func (s *accountsServer) CreateAccount(ctx context.Context, in *pb.CreateAccountRequest) (*pb.Account, error) {
 	acc, err := s.db.CreateAccount(ctx, in.Id)
 	response := &pb.Account{

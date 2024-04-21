@@ -21,3 +21,16 @@ func (q *Queries) CreateAccount(ctx context.Context, id string) (Account, error)
 	err := row.Scan(&i.ID, &i.BalanceDollars)
 	return i, err
 }
+
+const getAccountByID = `-- name: GetAccountByID :one
+SELECT id, balance_dollars
+FROM accounts
+WHERE id = ?
+`
+
+func (q *Queries) GetAccountByID(ctx context.Context, id string) (Account, error) {
+	row := q.db.QueryRowContext(ctx, getAccountByID, id)
+	var i Account
+	err := row.Scan(&i.ID, &i.BalanceDollars)
+	return i, err
+}

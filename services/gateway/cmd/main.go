@@ -22,7 +22,8 @@ var insecureOpts = []grpc.DialOption{
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", grpcHandler)
-	mux.HandleFunc("/accounts/create", handleCreateAccount)
+	mux.HandleFunc("POST /accounts", handleAccountsPost)
+	mux.HandleFunc("GET /accounts", handleAccountsGet)
 	mux.HandleFunc("/otps/generate", handleGenerateOTP)
 	server := http.Server{
 		Addr:    ":" + os.Getenv("GATEWAY_PORT"),
@@ -57,7 +58,7 @@ func grpcHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleCreateAccount(w http.ResponseWriter, r *http.Request) {
+func handleAccountsPost(w http.ResponseWriter, r *http.Request) {
 	conn, err := grpc.Dial("accounts:"+os.Getenv("ACCOUNTS_PORT"), insecureOpts...)
 	if err != nil {
 		fmt.Println("failed to dial grpc:", err)
@@ -73,6 +74,28 @@ func handleCreateAccount(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("failed to run RPC:", err)
 	} else {
 		fmt.Println("created account", resp.Id)
+	}
+}
+
+func handleAccountsGet(w http.ResponseWriter, r *http.Request) {
+	accountID := r.URL.Query().Get("accountID")
+	fmt.Println(accountID)
+
+	conn, err := grpc.Dial("accounts:"+os.Getenv("ACCOUNTS_PORT"), insecureOpts...)
+	if err != nil {
+		fmt.Println("failed to dial grpc:", err)
+	}
+	defer conn.Close()
+
+	accClient := accounts.NewAccountsClient(conn)
+	resp, err := accClient.GetAccount(
+		r.Context(),
+		&accounts.GetAccountRequest{Id: accountID},
+	)
+	if err != nil {
+		fmt.Println("failed to run RPC:", err)
+	} else {
+		fmt.Println("found account", resp)
 	}
 }
 
