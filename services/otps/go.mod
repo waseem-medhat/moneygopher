@@ -1,4 +1,4 @@
-module github.com/wipdev-tech/moneygopher/services/otp
+module github.com/wipdev-tech/moneygopher/services/otps
 
 go 1.22.2
 

@@ -9,7 +9,7 @@ import (
 	"os"
 	"time"
 
-	pb "github.com/wipdev-tech/moneygopher/services/otp"
+	pb "github.com/wipdev-tech/moneygopher/services/otps"
 	"google.golang.org/grpc"
 )
 
@@ -39,7 +39,6 @@ func main() {
 	go func() {
 		t := time.NewTicker(time.Second)
 		for range t.C {
-			fmt.Println(cache.otps)
 			cache.reap()
 		}
 	}()

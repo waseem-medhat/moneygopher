@@ -39,7 +39,7 @@ services:
     image:
       wipdev/moneygopher-otp
     build:
-      ./services/otp
+      ./services/otps
     ports:
       - "8083:8083"
     networks:

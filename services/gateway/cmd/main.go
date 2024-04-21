@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/wipdev-tech/moneygopher/services/accounts"
-	"github.com/wipdev-tech/moneygopher/services/otp"
+	"github.com/wipdev-tech/moneygopher/services/otps"
 	"github.com/wipdev-tech/moneygopher/services/transactions"
 	"google.golang.org/genproto/googleapis/type/money"
 	"google.golang.org/grpc"
@@ -21,10 +21,15 @@ var insecureOpts = []grpc.DialOption{
 
 func main() {
 	mux := http.NewServeMux()
+
 	mux.HandleFunc("/", grpcHandler)
+
 	mux.HandleFunc("POST /accounts", handleAccountsPost)
 	mux.HandleFunc("GET /accounts", handleAccountsGet)
-	mux.HandleFunc("/otps/generate", handleGenerateOTP)
+
+	mux.HandleFunc("POST /otps", handleOTPsPost)
+	mux.HandleFunc("GET /otps", handleOTPsGet)
+
 	server := http.Server{
 		Addr:    ":" + os.Getenv("GATEWAY_PORT"),
 		Handler: mux,
@@ -99,21 +104,24 @@ func handleAccountsGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleGenerateOTP(w http.ResponseWriter, r *http.Request) {
+func handleOTPsPost(w http.ResponseWriter, r *http.Request) {
 	conn, err := grpc.Dial("otp:"+os.Getenv("OTP_PORT"), insecureOpts...)
 	if err != nil {
 		fmt.Println("failed to dial grpc:", err)
 	}
 	defer conn.Close()
 
-	otpClient := otp.NewOtpClient(conn)
+	otpClient := otps.NewOtpClient(conn)
 
 	ctx := context.Background()
 	testID := uuid.NewString()
-	resp, err := otpClient.GenerateOTP(ctx, &otp.GenerateOtpRequest{AccountId: testID})
+	resp, err := otpClient.GenerateOTP(ctx, &otps.GenerateOtpRequest{AccountId: testID})
 	if err != nil {
 		fmt.Println("failed to run RPC:", err)
 	} else {
 		fmt.Println("new OTP:", resp.Password)
 	}
+}
+
+func handleOTPsGet(w http.ResponseWriter, r *http.Request) {
 }

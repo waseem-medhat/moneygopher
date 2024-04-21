@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v5.26.1
-// source: services/otp/otp.proto
+// source: services/otps/otps.proto
 
-package otp
+package otps
 
 import (
 	context "context"
@@ -101,5 +101,5 @@ var Otp_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "services/otp/otp.proto",
+	Metadata: "services/otps/otps.proto",
 }
