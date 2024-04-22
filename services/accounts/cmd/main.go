@@ -27,7 +27,8 @@ func (s *accountsServer) GetAccount(ctx context.Context, in *pb.GetAccountReques
 	}
 
 	acc := &pb.Account{
-		Id: dbAcc.ID,
+		Id:          dbAcc.ID,
+		PhoneNumber: dbAcc.PhoneNumber,
 		Balance: &money.Money{
 			CurrencyCode: "USD",
 			Units:        dbAcc.BalanceDollars,
@@ -38,9 +39,14 @@ func (s *accountsServer) GetAccount(ctx context.Context, in *pb.GetAccountReques
 }
 
 func (s *accountsServer) CreateAccount(ctx context.Context, in *pb.CreateAccountRequest) (*pb.Account, error) {
-	acc, err := s.db.CreateAccount(ctx, in.Id)
+	dbAcc, err := s.db.CreateAccount(ctx, database.CreateAccountParams{
+		ID:          in.Id,
+		PhoneNumber: in.PhoneNumber,
+	})
+
 	response := &pb.Account{
-		Id: acc.ID,
+		Id:          dbAcc.ID,
+		PhoneNumber: dbAcc.PhoneNumber,
 		Balance: &money.Money{
 			CurrencyCode: "USD",
 			Units:        0,

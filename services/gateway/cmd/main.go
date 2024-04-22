@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -64,6 +65,18 @@ func grpcHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleAccountsPost(w http.ResponseWriter, r *http.Request) {
+	type In struct {
+		PhoneNumber string `json:"phone_number"`
+	}
+
+	var in In
+	json.NewDecoder(r.Body).Decode(&in)
+
+	if in.PhoneNumber == "" {
+		http.Error(w, "invalid phone number", http.StatusBadRequest)
+		return
+	}
+
 	conn, err := grpc.Dial("accounts:"+os.Getenv("ACCOUNTS_PORT"), insecureOpts...)
 	if err != nil {
 		fmt.Println("failed to dial grpc:", err)
@@ -74,7 +87,11 @@ func handleAccountsPost(w http.ResponseWriter, r *http.Request) {
 
 	ctx := context.Background()
 	newID := uuid.NewString()
-	resp, err := accClient.CreateAccount(ctx, &accounts.CreateAccountRequest{Id: newID})
+	resp, err := accClient.CreateAccount(ctx, &accounts.CreateAccountRequest{
+		Id:          newID,
+		PhoneNumber: in.PhoneNumber,
+	})
+
 	if err != nil {
 		fmt.Println("failed to run RPC:", err)
 	} else {
@@ -100,26 +117,41 @@ func handleAccountsGet(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("failed to run RPC:", err)
 	} else {
-		fmt.Println("found account", resp)
+		fmt.Println("found account", resp.Id, "with phone number", resp.PhoneNumber)
 	}
 }
 
 func handleOTPsPost(w http.ResponseWriter, r *http.Request) {
-	conn, err := grpc.Dial("otp:"+os.Getenv("OTP_PORT"), insecureOpts...)
+	ctx := context.Background()
+	accountID := r.URL.Query().Get("accountID")
+
+	accoutsConn, err := grpc.Dial("accounts:"+os.Getenv("ACCOUNTS_PORT"), insecureOpts...)
 	if err != nil {
 		fmt.Println("failed to dial grpc:", err)
 	}
-	defer conn.Close()
+	defer accoutsConn.Close()
 
-	otpClient := otps.NewOtpsClient(conn)
+	accountsClient := accounts.NewAccountsClient(accoutsConn)
+	acc, err := accountsClient.GetAccount(ctx, &accounts.GetAccountRequest{Id: accountID})
+	if err != nil {
+		fmt.Println("failed to dial grpc:", err)
+	} else {
+		fmt.Println("found account:", acc.Id)
+	}
 
-	ctx := context.Background()
-	testID := uuid.NewString()
-	resp, err := otpClient.GenerateOtp(ctx, &otps.GenerateOtpRequest{AccountId: testID})
+	otpsConn, err := grpc.Dial("otp:"+os.Getenv("OTP_PORT"), insecureOpts...)
+	if err != nil {
+		fmt.Println("failed to dial grpc:", err)
+	}
+	defer otpsConn.Close()
+
+	otpsClient := otps.NewOtpsClient(otpsConn)
+
+	resp, err := otpsClient.GenerateOtp(ctx, &otps.GenerateOtpRequest{AccountId: acc.Id})
 	if err != nil {
 		fmt.Println("failed to run RPC:", err)
 	} else {
-		fmt.Println("new OTP:", resp.Otp)
+		fmt.Println("sending OTP", resp.Otp, "to number", acc.PhoneNumber)
 	}
 }
 

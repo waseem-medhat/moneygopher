@@ -1,6 +1,6 @@
 -- name: CreateAccount :one
-INSERT INTO accounts ( id )
-VALUES ( ? )
+INSERT INTO accounts ( id, phone_number )
+VALUES ( ?, ? )
 RETURNING *;
 
 -- name: GetAccountByID :one

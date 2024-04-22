@@ -6,5 +6,6 @@ package database
 
 type Account struct {
 	ID             string
+	PhoneNumber    string
 	BalanceDollars int64
 }

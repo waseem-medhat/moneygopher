@@ -10,20 +10,25 @@ import (
 )
 
 const createAccount = `-- name: CreateAccount :one
-INSERT INTO accounts ( id )
-VALUES ( ? )
-RETURNING id, balance_dollars
+INSERT INTO accounts ( id, phone_number )
+VALUES ( ?, ? )
+RETURNING id, phone_number, balance_dollars
 `
 
-func (q *Queries) CreateAccount(ctx context.Context, id string) (Account, error) {
-	row := q.db.QueryRowContext(ctx, createAccount, id)
+type CreateAccountParams struct {
+	ID          string
+	PhoneNumber string
+}
+
+func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error) {
+	row := q.db.QueryRowContext(ctx, createAccount, arg.ID, arg.PhoneNumber)
 	var i Account
-	err := row.Scan(&i.ID, &i.BalanceDollars)
+	err := row.Scan(&i.ID, &i.PhoneNumber, &i.BalanceDollars)
 	return i, err
 }
 
 const getAccountByID = `-- name: GetAccountByID :one
-SELECT id, balance_dollars
+SELECT id, phone_number, balance_dollars
 FROM accounts
 WHERE id = ?
 `
@@ -31,6 +36,6 @@ WHERE id = ?
 func (q *Queries) GetAccountByID(ctx context.Context, id string) (Account, error) {
 	row := q.db.QueryRowContext(ctx, getAccountByID, id)
 	var i Account
-	err := row.Scan(&i.ID, &i.BalanceDollars)
+	err := row.Scan(&i.ID, &i.PhoneNumber, &i.BalanceDollars)
 	return i, err
 }

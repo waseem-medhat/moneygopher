@@ -15,9 +15,11 @@ message GetAccountRequest {
 
 message CreateAccountRequest {
     string id = 1;
+    string phoneNumber = 2;
 }
 
 message Account {
     string id = 1;
-    google.type.Money balance = 2;
+    string phoneNumber = 2;
+    google.type.Money balance = 3;
 }
