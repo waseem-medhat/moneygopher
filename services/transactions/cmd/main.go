@@ -1,3 +1,4 @@
+// This is the entrypoint for the transactions service
 package main
 
 import (
