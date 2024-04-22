@@ -1,3 +1,5 @@
+// The API gateway is the frontend-facing service which communicates with the
+// relevant services for each endpoint.
 package main
 
 import (
@@ -39,7 +41,7 @@ func main() {
 	server.ListenAndServe()
 }
 
-func grpcHandler(w http.ResponseWriter, r *http.Request) {
+func grpcHandler(_ http.ResponseWriter, _ *http.Request) {
 	conn, err := grpc.Dial("transactions:"+os.Getenv("TRANSACTIONS_PORT"), insecureOpts...)
 	if err != nil {
 		fmt.Println("failed to dial grpc:", err)
@@ -99,7 +101,7 @@ func handleAccountsPost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleAccountsGet(w http.ResponseWriter, r *http.Request) {
+func handleAccountsGet(_ http.ResponseWriter, r *http.Request) {
 	accountID := r.URL.Query().Get("accountID")
 	fmt.Println(accountID)
 
@@ -121,7 +123,7 @@ func handleAccountsGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleOTPsPost(w http.ResponseWriter, r *http.Request) {
+func handleOTPsPost(_ http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	accountID := r.URL.Query().Get("accountID")
 
@@ -155,7 +157,7 @@ func handleOTPsPost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleOTPsGet(w http.ResponseWriter, r *http.Request) {
+func handleOTPsGet(_ http.ResponseWriter, r *http.Request) {
 	otp := r.URL.Query().Get("otp")
 
 	conn, err := grpc.Dial("otp:"+os.Getenv("OTP_PORT"), insecureOpts...)

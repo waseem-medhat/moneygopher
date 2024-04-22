@@ -1,3 +1,5 @@
+// The accounts service handles account management and storing balance
+// information.
 package main
 
 import (

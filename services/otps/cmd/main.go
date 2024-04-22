@@ -1,3 +1,5 @@
+// The OTPs service is responsible for generating, sending, caching, and
+// validating OTPs as requested by other services.
 package main
 
 import (
@@ -24,7 +26,7 @@ func (s *otpsServer) GenerateOtp(context.Context, *pb.GenerateOtpRequest) (*pb.G
 	return &pb.GenerateOtpResponse{Otp: newOTP}, nil
 }
 
-func (s *otpsServer) CheckOtp(ctx context.Context, in *pb.CheckOtpRequest) (*pb.CheckOtpResponse, error) {
+func (s *otpsServer) CheckOtp(_ context.Context, in *pb.CheckOtpRequest) (*pb.CheckOtpResponse, error) {
 	return &pb.CheckOtpResponse{IsValid: s.cache.get(in.Otp)}, nil
 }
 

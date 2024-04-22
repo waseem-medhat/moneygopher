@@ -1,3 +1,5 @@
+// This is a very simple tool for generating the inital boilerplate for a
+// service.
 package main
 
 import (

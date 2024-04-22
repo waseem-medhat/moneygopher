@@ -17,7 +17,7 @@ type transactionsServer struct {
 	pb.UnimplementedTransactionsServer
 }
 
-func (s *transactionsServer) Deposit(ctx context.Context, in *pb.DepositRequest) (*pb.DepositResponse, error) {
+func (s *transactionsServer) Deposit(_ context.Context, in *pb.DepositRequest) (*pb.DepositResponse, error) {
 	code, _ := iso.ByName(in.Amount.CurrencyCode)
 	if code == 0 {
 		fmt.Println("Invalid code")
