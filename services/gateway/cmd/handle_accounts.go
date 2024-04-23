@@ -13,8 +13,9 @@ import (
 )
 
 type account struct {
-	Id          string
-	PhoneNumber string
+	Id          string `json:"id"`
+	PhoneNumber string `json:"phone_number"`
+	Balance     int64  `json:"balance_dollars"`
 }
 
 func handleAccountsPost(w http.ResponseWriter, r *http.Request) {
@@ -34,6 +35,7 @@ func handleAccountsPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("failed to dial grpc:", err)
 		respondError(w, http.StatusInternalServerError, "internal server error")
+		return
 	}
 	defer conn.Close()
 
@@ -46,22 +48,26 @@ func handleAccountsPost(w http.ResponseWriter, r *http.Request) {
 		PhoneNumber: in.PhoneNumber,
 	})
 
-	acc := rpcAccountToAccount(resp)
-
 	if err != nil {
 		respondError(w, http.StatusInternalServerError, "internal server error")
-	} else {
-		respondJSON(w, http.StatusCreated, acc)
+		return
 	}
+
+	acc := rpcAccountToAccount(resp)
+	respondJSON(w, http.StatusCreated, acc)
 }
 
-func handleAccountsGet(_ http.ResponseWriter, r *http.Request) {
+func handleAccountsGet(w http.ResponseWriter, r *http.Request) {
 	accountID := r.URL.Query().Get("accountID")
-	fmt.Println(accountID)
+	if accountID == "" {
+		respondError(w, http.StatusBadRequest, "accountID not provided")
+		return
+	}
 
 	conn, err := grpc.Dial("accounts:"+os.Getenv("ACCOUNTS_PORT"), insecureOpts...)
 	if err != nil {
-		fmt.Println("failed to dial grpc:", err)
+		respondError(w, http.StatusInternalServerError, "internal server error")
+		return
 	}
 	defer conn.Close()
 
@@ -72,15 +78,18 @@ func handleAccountsGet(_ http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		fmt.Println("failed to run RPC:", err)
-	} else {
-		fmt.Println("found account", resp.Id, "with phone number", resp.PhoneNumber)
+		respondError(w, http.StatusInternalServerError, "internal server error")
+		return
 	}
+
+	acc := rpcAccountToAccount(resp)
+	respondJSON(w, http.StatusCreated, acc)
 }
 
 func rpcAccountToAccount(rpcAcc *accounts.Account) account {
 	return account{
 		Id:          rpcAcc.Id,
 		PhoneNumber: rpcAcc.PhoneNumber,
+		Balance:     rpcAcc.Balance.Units,
 	}
 }
