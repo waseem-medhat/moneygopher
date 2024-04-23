@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/google/uuid"
 	"github.com/wipdev-tech/moneygopher/services/accounts"
 	"github.com/wipdev-tech/moneygopher/services/otps"
 	"github.com/wipdev-tech/moneygopher/services/transactions"
@@ -66,63 +65,6 @@ func grpcHandler(_ http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-func handleAccountsPost(w http.ResponseWriter, r *http.Request) {
-	type In struct {
-		PhoneNumber string `json:"phone_number"`
-	}
-
-	var in In
-	json.NewDecoder(r.Body).Decode(&in)
-
-	if in.PhoneNumber == "" {
-		http.Error(w, "invalid phone number", http.StatusBadRequest)
-		return
-	}
-
-	conn, err := grpc.Dial("accounts:"+os.Getenv("ACCOUNTS_PORT"), insecureOpts...)
-	if err != nil {
-		fmt.Println("failed to dial grpc:", err)
-	}
-	defer conn.Close()
-
-	accClient := accounts.NewAccountsClient(conn)
-
-	ctx := context.Background()
-	newID := uuid.NewString()
-	resp, err := accClient.CreateAccount(ctx, &accounts.CreateAccountRequest{
-		Id:          newID,
-		PhoneNumber: in.PhoneNumber,
-	})
-
-	if err != nil {
-		fmt.Println("failed to run RPC:", err)
-	} else {
-		fmt.Println("created account", resp.Id)
-	}
-}
-
-func handleAccountsGet(_ http.ResponseWriter, r *http.Request) {
-	accountID := r.URL.Query().Get("accountID")
-	fmt.Println(accountID)
-
-	conn, err := grpc.Dial("accounts:"+os.Getenv("ACCOUNTS_PORT"), insecureOpts...)
-	if err != nil {
-		fmt.Println("failed to dial grpc:", err)
-	}
-	defer conn.Close()
-
-	accClient := accounts.NewAccountsClient(conn)
-	resp, err := accClient.GetAccount(
-		r.Context(),
-		&accounts.GetAccountRequest{Id: accountID},
-	)
-	if err != nil {
-		fmt.Println("failed to run RPC:", err)
-	} else {
-		fmt.Println("found account", resp.Id, "with phone number", resp.PhoneNumber)
-	}
-}
-
 func handleOTPsPost(_ http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	accountID := r.URL.Query().Get("accountID")
@@ -173,4 +115,16 @@ func handleOTPsGet(_ http.ResponseWriter, r *http.Request) {
 	} else {
 		fmt.Println("new OTP:", resp.IsValid)
 	}
+}
+
+func respondJSON(w http.ResponseWriter, statusCode int, payload any) {
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(payload)
+}
+
+func respondError(w http.ResponseWriter, statusCode int, message string) {
+	type err struct {
+		Error string `json:"error"`
+	}
+	respondJSON(w, statusCode, err{Error: message})
 }
