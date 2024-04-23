@@ -58,7 +58,7 @@ func handleAccountsPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleAccountsGet(w http.ResponseWriter, r *http.Request) {
-	accountID := r.URL.Query().Get("accountID")
+	accountID := r.PathValue("accountID")
 	if accountID == "" {
 		respondError(w, http.StatusBadRequest, "accountID not provided")
 		return

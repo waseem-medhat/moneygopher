@@ -27,7 +27,7 @@ func main() {
 	mux.HandleFunc("/", grpcHandler)
 
 	mux.HandleFunc("POST /accounts", handleAccountsPost)
-	mux.HandleFunc("GET /accounts", handleAccountsGet)
+	mux.HandleFunc("GET /accounts/{accountID}", handleAccountsGet)
 
 	mux.HandleFunc("POST /otps", handleOTPsPost)
 	mux.HandleFunc("GET /otps", handleOTPsGet)
