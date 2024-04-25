@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -60,7 +61,7 @@ func handleAccountsPost(w http.ResponseWriter, r *http.Request) {
 func handleAccountsGet(w http.ResponseWriter, r *http.Request) {
 	accountID := r.PathValue("accountID")
 	if accountID == "" {
-		respondError(w, http.StatusBadRequest, "accountID not provided")
+		respondError(w, http.StatusNotFound, "not found")
 		return
 	}
 
@@ -76,6 +77,10 @@ func handleAccountsGet(w http.ResponseWriter, r *http.Request) {
 		r.Context(),
 		&accounts.GetAccountRequest{Id: accountID},
 	)
+	if err != sql.ErrNoRows {
+		respondError(w, http.StatusNotFound, "not found")
+		return
+	}
 
 	if err != nil {
 		respondError(w, http.StatusInternalServerError, "internal server error")

@@ -24,7 +24,7 @@ var insecureOpts = []grpc.DialOption{
 func main() {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", grpcHandler)
+	mux.HandleFunc("/", handleNotFound)
 
 	mux.HandleFunc("POST /accounts", handleAccountsPost)
 	mux.HandleFunc("GET /accounts/{accountID}", handleAccountsGet)
@@ -115,6 +115,10 @@ func handleOTPsGet(_ http.ResponseWriter, r *http.Request) {
 	} else {
 		fmt.Println("new OTP:", resp.IsValid)
 	}
+}
+
+func handleNotFound(w http.ResponseWriter, _ *http.Request) {
+	respondError(w, http.StatusNotFound, "not found")
 }
 
 func respondJSON(w http.ResponseWriter, statusCode int, payload any) {
