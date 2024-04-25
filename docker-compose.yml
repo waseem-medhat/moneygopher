@@ -16,8 +16,8 @@ services:
       wipdev/moneygopher-transactions
     build:
       ./services/transactions
-    ports:
-      - "8081:8081"
+    # ports:
+    #   - "8081:8081"
     networks:
       - moneygopher
     env_file:
@@ -28,8 +28,8 @@ services:
       wipdev/moneygopher-accounts
     build:
       ./services/accounts
-    ports:
-      - "8082:8082"
+    # ports:
+    #   - "8082:8082"
     networks:
       - moneygopher
     env_file:
@@ -40,8 +40,8 @@ services:
       wipdev/moneygopher-otp
     build:
       ./services/otps
-    ports:
-      - "8083:8083"
+    # ports:
+    #   - "8083:8083"
     networks:
       - moneygopher
     env_file:

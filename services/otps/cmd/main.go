@@ -49,7 +49,7 @@ func main() {
 		}
 	}()
 
-	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%v", os.Getenv("OTP_PORT")))
+	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%v", os.Getenv("OTPS_PORT")))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -57,6 +57,6 @@ func main() {
 
 	grpcServer := grpc.NewServer(opts...)
 	pb.RegisterOtpsServer(grpcServer, &otpsServer{cache: cache})
-	fmt.Println("OTP service is up on port", os.Getenv("OTP_PORT"))
+	fmt.Println("OTP service is up on port", os.Getenv("OTPS_PORT"))
 	grpcServer.Serve(lis)
 }

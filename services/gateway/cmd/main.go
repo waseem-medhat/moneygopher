@@ -141,7 +141,7 @@ func handleOTPsPost(_ http.ResponseWriter, r *http.Request) {
 		fmt.Println("found account:", acc.Id)
 	}
 
-	otpsConn, err := grpc.Dial("otp:"+os.Getenv("OTP_PORT"), insecureOpts...)
+	otpsConn, err := grpc.Dial("otp:"+os.Getenv("OTPS_PORT"), insecureOpts...)
 	if err != nil {
 		fmt.Println("failed to dial grpc:", err)
 	}
@@ -160,7 +160,7 @@ func handleOTPsPost(_ http.ResponseWriter, r *http.Request) {
 func handleOTPsGet(_ http.ResponseWriter, r *http.Request) {
 	otp := r.URL.Query().Get("otp")
 
-	conn, err := grpc.Dial("otp:"+os.Getenv("OTP_PORT"), insecureOpts...)
+	conn, err := grpc.Dial("otp:"+os.Getenv("OTPS_PORT"), insecureOpts...)
 	if err != nil {
 		fmt.Println("failed to dial grpc:", err)
 	}
