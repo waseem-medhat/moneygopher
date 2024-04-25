@@ -14,7 +14,7 @@ import (
 )
 
 type account struct {
-	Id          string `json:"id"`
+	ID          string `json:"id"`
 	PhoneNumber string `json:"phone_number"`
 	Balance     int64  `json:"balance_dollars"`
 }
@@ -77,7 +77,7 @@ func handleAccountsGet(w http.ResponseWriter, r *http.Request) {
 		r.Context(),
 		&accounts.GetAccountRequest{Id: accountID},
 	)
-	if err != sql.ErrNoRows {
+	if err == sql.ErrNoRows {
 		respondError(w, http.StatusNotFound, "not found")
 		return
 	}
@@ -93,7 +93,7 @@ func handleAccountsGet(w http.ResponseWriter, r *http.Request) {
 
 func rpcAccountToAccount(rpcAcc *accounts.Account) account {
 	return account{
-		Id:          rpcAcc.Id,
+		ID:          rpcAcc.Id,
 		PhoneNumber: rpcAcc.PhoneNumber,
 		Balance:     rpcAcc.Balance.Units,
 	}
