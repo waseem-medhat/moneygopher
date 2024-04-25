@@ -24,9 +24,6 @@ type accountsServer struct {
 
 func (s *accountsServer) GetAccount(ctx context.Context, in *pb.GetAccountRequest) (*pb.Account, error) {
 	dbAcc, err := s.db.GetAccountByID(ctx, in.Id)
-	if err != nil {
-		return nil, err
-	}
 
 	acc := &pb.Account{
 		Id:          dbAcc.ID,

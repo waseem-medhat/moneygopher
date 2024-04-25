@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/wipdev-tech/moneygopher/services/accounts"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/status"
 )
 
 type account struct {
@@ -77,7 +78,8 @@ func handleAccountsGet(w http.ResponseWriter, r *http.Request) {
 		r.Context(),
 		&accounts.GetAccountRequest{Id: accountID},
 	)
-	if err == sql.ErrNoRows {
+
+	if status.Convert(err).Message() == sql.ErrNoRows.Error() {
 		respondError(w, http.StatusNotFound, "not found")
 		return
 	}
