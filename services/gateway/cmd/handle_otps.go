@@ -67,20 +67,29 @@ func handleOTPsPost(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("sending OTP", resp.Otp, "to number", acc.PhoneNumber)
 }
 
-func handleOTPsGet(_ http.ResponseWriter, r *http.Request) {
+func handleOTPsGet(w http.ResponseWriter, r *http.Request) {
 	otp := r.URL.Query().Get("otp")
+
+	if otp == "" {
+		respondError(w, http.StatusNotFound, "not found")
+		return
+	}
 
 	conn, err := grpc.Dial("otp:"+os.Getenv("OTPS_PORT"), insecureOpts...)
 	if err != nil {
-		fmt.Println("failed to dial grpc:", err)
+		fmt.Println("failed to dial otps server:", err)
+		respondError(w, http.StatusInternalServerError, "internal server error")
+		return
 	}
 	defer conn.Close()
 
 	otpClient := otps.NewOtpsClient(conn)
 	resp, err := otpClient.CheckOtp(r.Context(), &otps.CheckOtpRequest{Otp: otp})
 	if err != nil {
-		fmt.Println("failed to run RPC:", err)
-	} else {
-		fmt.Println("new OTP:", resp.IsValid)
+		fmt.Println("failed to check otp:", err)
+		respondError(w, http.StatusInternalServerError, "internal server error")
+		return
 	}
+
+	fmt.Println("OTP valid:", resp.IsValid)
 }
