@@ -40,8 +40,28 @@ docker compose up
 > **TODO**: API documentation
 
 ## Tech Stack
+<!--
+flowchart LR
+    fe[Frontend] --- gateway(fa:fa-network-wired API Gateway)
 
-![design chart](https://imgur.com/6xsALaH.png)
+    gateway --- otp[OTP]
+    gateway --- trx[Transactions]
+    gateway --- acc[Accounts]
+    gateway --- cards[Cards] 
+    
+    subgraph Services
+    otp -.- acc
+    otp -.- trx
+    otp -.- cards
+    trx -.- acc
+    trx -.- cards
+    end
+    
+    cards --- cardsdb([fa:fa-database Cards DB])
+    acc --- accdb([fa:fa-database Accounts DB])
+    trx --- trxdb([fa:fa-database Transactions DB])
+-->
+![design chart](https://i.imgur.com/yPc1n68.png)
 
 > [!NOTE]
 > Go over the languages and libraries used in your project here.
